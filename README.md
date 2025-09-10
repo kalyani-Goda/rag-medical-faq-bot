@@ -20,6 +20,13 @@ It was built as part of the **AI/ML Engineer Assignment – RAG Systems**.
 - **OpenAI API** (`text-embedding-3-small`, `gpt-4o-mini` or `gpt-3.5-turbo`)
 - **Streamlit** (chat UI)
 
+
+## Dataset
+
+- Comprehensive Medical Q&A Dataset from Kaggle.
+- Select Dataset: Search for and select the desired dataset from the Kaggle i.e . Comprehensive Medical Q&A Dataset.
+- Link: https://www.kaggle.com/datasets/thedevastator/comprehensive-medical-q-a-dataset/data
+
 ---
 
 ## 📦 Setup
