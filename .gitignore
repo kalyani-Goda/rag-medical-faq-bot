@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+env/
+.ragenv/
+.venv/
+
+# Chroma DB storage
+chroma_db/
+.cache/
+*.sqlite3
+
+# Credentials
+.env
+
+# MacOS
+.DS_Store
