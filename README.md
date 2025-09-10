@@ -97,5 +97,5 @@ It was built as part of the **AI/ML Engineer Assignment – RAG Systems**.
     "What is the recommended daily water intake?"
 
 
-## 📽️ Demo(Optional)
+## 📽️ Demo
     [Add screenshot or video demo link here]
