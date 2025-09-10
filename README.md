@@ -86,7 +86,7 @@ It was built as part of the **AI/ML Engineer Assignment – RAG Systems**.
     Streamlit app for quick demo + CLI fallback.
 
 ## ✅ Example Queries
-    ```"What are the early symptoms of diabetes?"
+    "What are the early symptoms of diabetes?"
 
     "Can children take paracetamol?"
 
@@ -94,7 +94,7 @@ It was built as part of the **AI/ML Engineer Assignment – RAG Systems**.
 
     "How to manage high blood pressure?"
 
-    "What is the recommended daily water intake?"```
+    "What is the recommended daily water intake?"
 
 
 ## 📽️ Demo(Optional)
