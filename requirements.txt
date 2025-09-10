@@ -3,3 +3,4 @@ chromadb
 pandas
 streamlit
 tiktoken
+pysqlite3-binary
