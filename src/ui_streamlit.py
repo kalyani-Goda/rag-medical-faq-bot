@@ -1,16 +1,20 @@
 import streamlit as st
-from chatbot import generate_answer
+from chatbot import generate_answer, retrieve_context
+import time
+st.title("🩺 Medical FAQ Chatbot (RAG + Ollama)")
 
-st.set_page_config(page_title="MedQuad QA Chatbot", layout="centered")
+query = st.text_input("Ask a medical question:")
 
-st.title("💬 MedQuad Chatbot")
-st.write("Ask me questions, and I'll answer based on the knowledge base.")
-
-# Input box
-user_query = st.text_input("Enter your question:")
-
-if st.button("Ask") and user_query:
+if st.button("Ask") and query:
+    start = time.perf_counter()  # ⏱ start time
     with st.spinner("Thinking..."):
-        answer = generate_answer(user_query)
-    st.success("Answer:")
+        answer = generate_answer(query)
+        context = retrieve_context(query)
+    end = time.perf_counter()    # ⏱ end time
+    runtime = end - start
+
+    st.subheader("Answer")
     st.write(answer)
+    st.write(f"⏱ Runtime: {runtime:.2f} seconds")
+    with st.expander("Retrieved Context"):
+        st.write(context)

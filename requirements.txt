@@ -1,6 +1,10 @@
-openai>=1.0.0
 chromadb
 pandas
+numpy<2
 streamlit
 tiktoken
-pysqlite3-binary
+torch 
+transformers 
+sentence-transformers
+python-dotenv
+google-genai==1.7.0

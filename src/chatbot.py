@@ -1,55 +1,56 @@
-import os
-from openai import OpenAI
+
 import chromadb
+import requests
+import json
+import os
+import shutil
+from google import genai
 from dotenv import load_dotenv
+from sentence_transformers import SentenceTransformer
 
 load_dotenv()
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+DB_PATH = os.getenv("DB_PATH")
+googlekey = os.getenv("GOOGLE_API_KEY")
 
-# Initialize OpenAI client
-client = OpenAI(api_key=OPENAI_API_KEY)
+# Load DB & embedding model
+chroma_client = chromadb.PersistentClient(path=DB_PATH)
+db = chroma_client.get_collection("medical_faqs")
+embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+client = genai.Client(api_key=googlekey)
 
-# Define same embedding function used in build_index.py
-class CustomEmbeddingFunction:
-    def __call__(self, input):
-        response = client.embeddings.create(
-            model="text-embedding-3-small",  # must match build_index.py
-            input=input
-        )
-        return [item.embedding for item in response.data]
+def retrieve_context(query, n_results=3):
+    query_emb = embedding_model.encode(query).tolist()
+    results = db.query(query_embeddings=[query_emb], n_results=n_results)
+    return results["documents"][0]
 
-    def name(self):
-        return "custom-openai-embedding"
 
-# Initialize Chroma with persistent DB
-chroma_client = chromadb.PersistentClient(path="./chroma_db")
-
-# Load collection with the same embedding function
-DB_NAME = "medquaddb_openai"
-embed_fn = CustomEmbeddingFunction()
-db = chroma_client.get_or_create_collection(name=DB_NAME, embedding_function=embed_fn)
-
-# Functions
-def retrieve_context(query: str, n_results: int = 3):
-    results = db.query(query_texts=[query], n_results=n_results)
-    return results
+def generate_prompt(query: str):
+    # Build prompt for the LLM
+    passages = retrieve_context(query)
+    prompt = "You are a helpful assistant. Use the PASSAGEs below as a context to answer the QUESTION. If passages don't answer, say you don't have enough info. However, you are talking to a non-medical audience, so be sure to break down complicated concepts and strike a friendly and conversational tone. Be sure to respond in a complete sentence with relavent informtion.\n\n"
+    prompt += f"QUESTION: {query}\n\n"
+    for idx, p in enumerate(passages):
+        prompt += f"PASSAGE {idx+1}: {p}\n\n"
+    prompt += "Answer (concise, friendly):"
+    return prompt
 
 def generate_answer(query: str):
-    results = retrieve_context(query)
-    retrieved_docs = results["documents"][0]
 
-    context = "\n\n".join(retrieved_docs)
-    prompt = f"""
-    You are a helpful medical assistant.
-    Use the following context to answer the question.
+    prompt = generate_prompt(query)
+    print(prompt)
 
-    Question: {query}
-    Context: {context}
-    """
+    answer = client.models.generate_content(
+    model="gemini-2.0-flash",
+    contents=prompt)
 
-    completion = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}],
-    )
-    return completion.choices[0].message.content
+    return answer.text
+
+if __name__ == "__main__":
+    # Example query
+    user_query = "What are the symptoms of diabetes?"
+
+    print("🔎 Query:", user_query)
+    answer = generate_answer(user_query)
+    print("\n💡 Answer:\n", answer)
+
