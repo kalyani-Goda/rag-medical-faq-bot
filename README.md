@@ -102,7 +102,3 @@ It was built as part of the **AI/ML Engineer Assignment – RAG Systems**.
     "How to manage high blood pressure?"
 
     "What is the recommended daily water intake?"
-
-
-## 📽️ Demo
-    [Add screenshot or video demo link here]
